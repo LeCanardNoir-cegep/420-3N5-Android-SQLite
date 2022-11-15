@@ -30,12 +30,12 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         resumeDate((TextView) findViewById(R.id.resume));
 
-        /*try {
+        try {
             addPerson();
         } catch (ParseException e) {
             Log.e(TAG, "onCreate: Person: \n" + e.getMessage() );
             e.printStackTrace();
-        }*/
+        }
     }
 
     @Override

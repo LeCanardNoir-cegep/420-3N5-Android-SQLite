@@ -7,7 +7,7 @@ import androidx.room.TypeConverters;
 import com.pouliot.sqliteroom.models.Person;
 import com.pouliot.sqliteroom.models.StopDate;
 
-@Database(entities = {StopDate.class, Person.class}, version = 4, exportSchema = false)
+@Database(entities = {StopDate.class, Person.class}, version = 11, exportSchema = false)
 @TypeConverters({Converter.class})
 public abstract class DbContext extends RoomDatabase {
     public abstract DbContextDAO dao();

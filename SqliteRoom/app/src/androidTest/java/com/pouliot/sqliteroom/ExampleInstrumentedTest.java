@@ -1,26 +1,72 @@
 package com.pouliot.sqliteroom;
 
-import android.content.Context;
-
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
-@RunWith(AndroidJUnit4.class)
+import android.content.Context;
+
+import androidx.room.Room;
+import androidx.test.core.app.ApplicationProvider;
+
+import com.pouliot.sqliteroom.dao.DbContext;
+import com.pouliot.sqliteroom.models.Person;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 public class ExampleInstrumentedTest {
     @Test
-    public void useAppContext() {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.pouliot.sqliteroom", appContext.getPackageName());
+    public void checkTestInstallation() {
+        assertEquals(true, true);
     }
+
+    @Test
+    public void testPerson(){
+        Context context = ApplicationProvider.getApplicationContext();
+        DbContext db = Room.inMemoryDatabaseBuilder(context, DbContext.class).build();
+        int nb = 10;
+        for(int i = 0; i < nb; i++){
+            Person p = new Person("Bruno_" + i, new Date(), Person.Sextype.Homme);
+            db.dao().createPerson(p);
+        }
+        List<Person> persons = db.dao().getAllPersons();
+        assertEquals(nb, persons.size());
+        db.close();
+    }
+
+    @Test
+    public void testManyPerson(){
+        Context context = ApplicationProvider.getApplicationContext();
+        DbContext db = Room.inMemoryDatabaseBuilder(context, DbContext.class).build();
+        int nb = 100;
+        for(int i = 0; i < nb; i++){
+            Person p = new Person("Bruno_" + i, new Date(), Person.Sextype.Homme);
+            db.dao().createPerson(p);
+        }
+        List<Person> persons = db.dao().getAllPersons();
+        assertEquals(nb, persons.size());
+        db.close();
+    }
+
+    @Test
+    public void testTransaction(){
+        Context context = ApplicationProvider.getApplicationContext();
+        DbContext db = Room.inMemoryDatabaseBuilder(context, DbContext.class).build();
+
+        int nb = 100;
+        List<Person> pList = new ArrayList<>();
+        for (int i = 0; i < nb; i++) {
+            Person p = new Person("Bruno-" + i, new Date(), Person.Sextype.Homme);
+            pList.add(p);
+        }
+        Person p = new Person("toto", new Date(), Person.Sextype.Femme);
+        db.dao().addFriends(p, pList);
+        //assertEquals(nb, db.dao().getPersonsBySex(Person.Sextype.Homme).size());
+        assertEquals(pList.get(0).id, db.dao().getPersonsByName(p.name).friendsId.get(0));
+
+    }
+
 }
